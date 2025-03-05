@@ -6,16 +6,59 @@
     <title>Teachable Machine Background Color</title>
  <style>
         body {
-            color:#242424;
+            color: #242424;
+            background: linear-gradient(to bottom, #fee87b, #e57b19);
+            height: 100vh;
+        }
+        #label-container {
+            display: none;
+        }
+        .bolita {
+            position: absolute;
+            bottom: 0vh;
+        }
+        .jump {
+            animation: jump 0.5s ease;
+        }
+        .trueno {
+            position: absolute;
+            transform: translate(100%, 100%);
+            display: none;
+        }   
+
+        @keyframes jump {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-300px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes growAndDisappear {
+            0% { transform: scale(0); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        .growAndDisappear {
+            animation: growAndDisappear 1s ease forwards;
         }
     </style>
 </head>
 <body>
     <div>Teachable Machine Audio Model</div>
 <button type="button" onclick="init()">Start</button>
+
+<div class="bolita">
+    <img src="./assets/bolita.svg"  alt="bolita" width="100" height="100">
+</div>
+<div class="trueno">
+    <img src="./assets/trueno.svg"  alt="trueno" width="100" height="100">
+</div>
+
+
+<!-- DE ACÁ PARA ABAJO NO TOCAR !!! -->
 <div id="label-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
+<script src="./actions.js"></script>
 
 <script type="text/javascript">
     // more documentation available at
@@ -50,6 +93,8 @@
         return recognizer;
     }
 
+
+
     async function init() {
         const recognizer = await createModel();
         const classLabels = recognizer.wordLabels(); // get class labels
@@ -67,6 +112,12 @@
             for (let i = 0; i < classLabels.length; i++) {
                 const classPrediction = classLabels[i] + ": " + result.scores[i].toFixed(2);
                 labelContainer.childNodes[i].innerHTML = classPrediction;
+                console.log(classPrediction);
+                if (classLabels[i] === "chasquido") {
+                    handleChasquidoPrediction(result.scores[i]);
+                } else if (classLabels[i] === "aplausos") {
+                    handleAplausosPrediction(result.scores[i]);
+                }
             }
         }, {
             includeSpectrogram: true, // in case listen should return result.spectrogram
