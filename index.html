@@ -45,6 +45,8 @@
 <body>
     <div>Teachable Machine Audio Model</div>
 <button type="button" onclick="init()">Start</button>
+<button type="button" onclick="stopListening()">Stop</button>
+<button type="button" onclick="generateCSV()">Download CSV</button>
 
 <div class="bolita">
     <img src="./assets/bolita.svg"  alt="bolita" width="100" height="100">
@@ -113,6 +115,7 @@
                 const classPrediction = classLabels[i] + ": " + result.scores[i].toFixed(2);
                 labelContainer.childNodes[i].innerHTML = classPrediction;
                 console.log(classPrediction);
+                savePredictionToLocalStorage(classPrediction);
                 if (classLabels[i] === "chasquido") {
                     handleChasquidoPrediction(result.scores[i]);
                 } else if (classLabels[i] === "aplausos") {
